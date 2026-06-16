@@ -1,166 +1,201 @@
-# AI 面试官：自有 API + 本地 RAG
+# Vibecoding Agents
 
-这是根据《AI 面试官系统智能体实训方案》落地的自建版本。项目不绑定智谱清言、腾讯元器、DeepSeek 或其他固定厂商；模型接口、模型名和密钥均由你自行配置。
+这个仓库包含两个可运行的 AI 智能体项目：
 
-核心功能：
+1. **AI 面试官系统**
+   - 位置：仓库根目录
+   - 用途：技术面试问答、模拟追问、项目深挖、简历与行为面试训练
+   - 本地端口：`8000`
 
-- 本地知识库：支持 TXT、Markdown、CSV、JSON；可选支持 PDF、DOCX。
-- 中文检索：使用本地 TF-IDF 与中文字符组合检索，不下载大型向量模型。
-- 自有 API：兼容 OpenAI `chat/completions` 请求格式。
-- 两种使用方式：命令行问答和浏览器聊天界面。
-- 来源引用：每次回答展示检索到的本地文件和相关度。
-- 多轮对话：保留最近几轮上下文。
+2. **AI 客服系统**
+   - 位置：`customer_service_agent/`
+   - 用途：电商售后 FAQ、物流、退换货、优惠券、投诉与人工服务引导
+   - 本地端口：`8001`
 
-## 第 1 步：准备环境
+两个项目都使用：
 
-需要 Python 3.10 或更高版本。进入项目目录：
+- 本地知识库 RAG
+- OpenAI `chat/completions` 兼容 API
+- 自有 API Key 配置
+- 浏览器聊天界面
+- 命令行问答
+- 离线测试
 
-```powershell
-cd C:\Users\icYanami\Desktop\智能体\ai_interviewer
-python --version
-```
+真实密钥不要提交到 GitHub。`.env` 已被 `.gitignore` 忽略。
 
-核心功能没有第三方依赖，可以直接运行。
-
-如果知识库中需要放 PDF 或 DOCX，再安装可选依赖：
-
-```powershell
-python -m pip install pypdf python-docx
-```
-
-## 第 2 步：配置自己的 API
-
-项目已经准备好本地 `.env` 文件。打开它，至少填写：
-
-```dotenv
-API_BASE_URL=https://你的接口地址/v1
-API_KEY=你的API密钥
-API_MODEL=你的模型名称
-```
-
-默认最终请求地址是：
+## 项目结构
 
 ```text
-API_BASE_URL + /chat/completions
+vibecodingagents/
+├── app/                         AI 面试官后端逻辑
+├── docs/                        AI 面试官知识库
+├── tests/                       AI 面试官测试
+├── web/                         AI 面试官网页界面
+├── ingest.py                    AI 面试官知识库入库
+├── web.py                       AI 面试官网页服务
+├── query.py                     AI 面试官命令行
+├── check_api.py                 AI 面试官 API 检查
+├── render.yaml                  AI 面试官 Render 部署配置
+├── Dockerfile                   AI 面试官 Docker 部署配置
+└── customer_service_agent/
+    ├── app/                     AI 客服后端逻辑
+    ├── docs/                    AI 客服知识库
+    ├── tests/                   AI 客服测试
+    ├── web/                     AI 客服网页界面
+    ├── ingest.py                AI 客服知识库入库
+    ├── web.py                   AI 客服网页服务
+    ├── query.py                 AI 客服命令行
+    ├── check_api.py             AI 客服 API 检查
+    ├── render.yaml              AI 客服 Render 部署配置
+    ├── railway.json             AI 客服 Railway 部署配置
+    └── Procfile                 AI 客服通用部署入口
 ```
 
-如果服务商给的是完整地址，例如 `https://example.com/v1/chat/completions`，可直接把完整地址填入 `API_BASE_URL`。
+## API 配置
 
-非标准鉴权也可以配置：
+两个项目都需要配置自己的模型 API。
+
+面试官项目复制根目录的模板：
+
+```powershell
+Copy-Item .env.example .env
+```
+
+客服项目复制子目录模板：
+
+```powershell
+cd customer_service_agent
+Copy-Item .env.example .env
+```
+
+至少填写：
 
 ```dotenv
-API_KEY_HEADER=X-API-Key
-API_KEY_PREFIX=
-API_EXTRA_HEADERS_JSON={"X-App-Id":"your-app-id"}
+API_BASE_URL=https://guaihub.com/v1
+API_KEY=你的完整sk密钥
+API_MODEL=gpt-5.4-mini
+API_CHAT_PATH=/chat/completions
+API_KEY_HEADER=Authorization
+API_KEY_PREFIX=Bearer
 ```
 
-真实 API Key 只能放在 `.env` 或系统环境变量中。`.env` 已被 `.gitignore` 忽略。
-
-填写后先单独检查 API：
+配置完成后可检查 API：
 
 ```powershell
 python check_api.py
 ```
 
-## 第 3 步：准备知识库
+## 运行 AI 面试官
 
-把资料放到 `docs/`。目前已经附带 Python、Java/JVM、算法、操作系统、网络、数据库、Git 和 STAR 行为面试示例。
-
-建议每个问题使用下面的 Markdown 结构：
-
-```markdown
-## 什么是 TCP 三次握手？
-
-这里填写准确、完整的参考答案。
-```
-
-修改、增加或删除知识库文件后，都需要重新运行入库脚本。
-
-## 第 4 步：建立本地索引
+在仓库根目录执行：
 
 ```powershell
 python ingest.py
-```
-
-成功后会生成 `data/rag_index.json`。这个文件可随时重新生成，不包含 API Key。
-
-可调整切分参数：
-
-```powershell
-python ingest.py --chunk-size 700 --chunk-overlap 100
-```
-
-## 第 5 步：运行
-
-浏览器版本：
-
-```powershell
 python web.py
 ```
 
-打开 [http://127.0.0.1:8000](http://127.0.0.1:8000)。
+打开：
 
-也可以执行一键脚本，它会先重建索引再启动网页：
-
-```powershell
-.\start.ps1
+```text
+http://127.0.0.1:8000
 ```
 
-命令行版本：
+也可以使用命令行：
 
 ```powershell
 python query.py
 ```
 
-## 第 6 步：测试
+## 运行 AI 客服
 
-测试不会调用真实 API：
+进入客服项目目录：
+
+```powershell
+cd customer_service_agent
+python ingest.py
+python web.py
+```
+
+打开：
+
+```text
+http://127.0.0.1:8001
+```
+
+也可以使用命令行：
+
+```powershell
+python query.py
+```
+
+## 公网部署
+
+### 部署面试官
+
+在 Render 创建 Web Service，选择本仓库根目录。
+
+```text
+Build Command: python ingest.py
+Start Command: python web.py
+```
+
+环境变量：
+
+```text
+WEB_HOST=0.0.0.0
+API_BASE_URL=https://guaihub.com/v1
+API_KEY=你的完整sk密钥
+API_MODEL=gpt-5.4-mini
+API_CHAT_PATH=/chat/completions
+API_KEY_HEADER=Authorization
+API_KEY_PREFIX=Bearer
+```
+
+### 部署客服
+
+在 Render 创建另一个 Web Service，并设置 Root Directory：
+
+```text
+customer_service_agent
+```
+
+然后填写：
+
+```text
+Build Command: python ingest.py
+Start Command: python web.py
+```
+
+环境变量同上。客服项目还可以额外配置：
+
+```text
+STORE_NAME=你的店铺名称
+HUMAN_SERVICE_TEXT=你的人工客服说明
+```
+
+## 测试
+
+面试官测试：
 
 ```powershell
 python -m unittest discover -s tests -v
 ```
 
-## 常见问题
+客服测试：
 
-### API 返回 401 或 403
-
-检查 `API_KEY`、鉴权头和前缀。大多数兼容接口使用：
-
-```dotenv
-API_KEY_HEADER=Authorization
-API_KEY_PREFIX=Bearer
+```powershell
+cd customer_service_agent
+python -m unittest discover -s tests -v
 ```
 
-### API 返回 404
+测试使用本地模拟 API，不会消耗真实模型额度。
 
-检查最终地址是否正确。默认会在 `API_BASE_URL` 后追加 `/chat/completions`。
+## 两个项目怎么区分
 
-### 提示响应格式不兼容
+| 项目 | 位置 | 主要用途 | 默认端口 |
+| --- | --- | --- | --- |
+| AI 面试官 | 根目录 | 技术面试、项目深挖、简历与行为面试 | `8000` |
+| AI 客服 | `customer_service_agent/` | 电商售后客服 FAQ 与人工服务引导 | `8001` |
 
-项目默认读取：
+如果只需要提交一个公网网址，部署对应项目即可；如果两个都要展示，需要在 Render 创建两个 Web Service。
 
-```json
-{"choices":[{"message":{"content":"回答内容"}}]}
-```
-
-如果你的 API 使用其他响应结构，需要在 `app/api_client.py` 的 `_extract_content` 中增加适配。
-
-### 检索结果不准确
-
-先补充更完整的知识库内容，再尝试增大 `RAG_TOP_K`。每次修改文档后记得重新执行 `python ingest.py`。
-
-## 项目结构
-
-```text
-ai_interviewer/
-├── app/                 核心配置、检索、API 和问答逻辑
-├── docs/                本地知识库
-├── tests/               离线自动化测试
-├── web/                 浏览器界面
-├── ingest.py            构建知识库索引
-├── check_api.py         检查自有 API 连通性
-├── query.py             命令行问答
-├── web.py               网页服务
-├── start.ps1            Windows 一键启动
-└── .env.example         API 配置模板
-```
