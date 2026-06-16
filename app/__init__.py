@@ -1,0 +1,2 @@
+"""AI interviewer application package."""
+

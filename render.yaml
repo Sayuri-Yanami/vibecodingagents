@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: ai-interviewer
+    runtime: python
+    plan: starter
+    buildCommand: "python ingest.py"
+    startCommand: "python web.py"
+    envVars:
+      - key: WEB_HOST
+        value: 0.0.0.0
+      - key: API_BASE_URL
+        sync: false
+      - key: API_KEY
+        sync: false
+      - key: API_MODEL
+        sync: false
+      - key: API_CHAT_PATH
+        value: /chat/completions
+      - key: API_KEY_HEADER
+        value: Authorization
+      - key: API_KEY_PREFIX
+        value: Bearer
+      - key: API_TIMEOUT
+        value: "90"
+      - key: API_TEMPERATURE
+        value: "0.2"
+      - key: API_MAX_TOKENS
+        value: "1200"
+      - key: RAG_TOP_K
+        value: "4"
+      - key: RAG_MIN_SCORE
+        value: "0.03"
+

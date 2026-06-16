@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI 技术面试官</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">LOCAL RAG INTERVIEW LAB</p>
+        <h1>AI 技术面试官</h1>
+        <p class="subtitle">你的 API，本地知识库，可追溯的面试训练。</p>
+      </div>
+      <div class="status-card">
+        <span id="statusDot" class="status-dot"></span>
+        <div>
+          <strong id="statusText">正在检查服务</strong>
+          <small id="modelText">等待模型信息</small>
+        </div>
+      </div>
+    </header>
+
+    <section class="workspace">
+      <aside class="sidebar">
+        <div class="panel-label">快速开始</div>
+        <button class="prompt-chip" data-prompt="请解释 TCP 三次握手，并说明为什么不是两次。">
+          TCP 三次握手
+        </button>
+        <button class="prompt-chip" data-prompt="Java 中 HashMap 的工作原理是什么？">
+          Java HashMap
+        </button>
+        <button class="prompt-chip" data-prompt="Python 生成器和普通函数有什么区别？">
+          Python 生成器
+        </button>
+        <button class="prompt-chip" data-prompt="请用 STAR 方法帮我组织一次项目冲突经历。">
+          STAR 行为面试
+        </button>
+
+        <div class="guide">
+          <div class="panel-label">练习建议</div>
+          <p>先自己作答，再让面试官点评。追问“还有哪些遗漏”可以训练回答完整性。</p>
+        </div>
+
+        <button id="clearButton" class="secondary-button">清空本轮对话</button>
+      </aside>
+
+      <section class="chat-panel">
+        <div id="messages" class="messages" aria-live="polite">
+          <article class="message assistant">
+            <div class="avatar">AI</div>
+            <div class="bubble">
+              <p>你好，我会先检索本地知识库，再使用你配置的模型生成回答。</p>
+              <p>你可以直接提问，也可以先给出自己的答案，让我按面试标准点评。</p>
+            </div>
+          </article>
+        </div>
+
+        <form id="chatForm" class="composer">
+          <label for="question" class="sr-only">输入面试问题</label>
+          <textarea
+            id="question"
+            rows="2"
+            maxlength="4000"
+            placeholder="例如：请解释进程与线程的区别，并追问一个常见面试题。"
+            required
+          ></textarea>
+          <button id="sendButton" type="submit">发送</button>
+        </form>
+        <p class="composer-tip">Enter 发送，Shift + Enter 换行。回答内容由你的模型 API 生成。</p>
+      </section>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
+
