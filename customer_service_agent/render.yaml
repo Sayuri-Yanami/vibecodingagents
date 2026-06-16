@@ -1,12 +1,15 @@
 services:
   - type: web
     name: ai-customer-service-agent
-    env: python
-    plan: free
-    buildCommand: python ingest.py
-    startCommand: python web.py
-    autoDeploy: true
+    runtime: python
+    plan: starter
+    region: singapore
+    buildCommand: "python ingest.py"
+    startCommand: "python web.py"
+    healthCheckPath: /api/health
     envVars:
+      - key: WEB_HOST
+        value: 0.0.0.0
       - key: API_BASE_URL
         sync: false
       - key: API_KEY
@@ -36,6 +39,6 @@ services:
       - key: HISTORY_TURNS
         value: "4"
       - key: STORE_NAME
-        value: 示例优选商城
+        value: "示例优选商城"
       - key: HUMAN_SERVICE_TEXT
-        value: 人工客服服务时间为每天 09:00-21:00，请在当前页面留言订单号后四位和问题摘要，我们会尽快处理。
+        value: "人工客服服务时间为每天 09:00-21:00，请留下订单号后四位和问题摘要，我们会尽快处理。"

@@ -130,6 +130,25 @@ python query.py
 
 ## 公网部署
 
+这个仓库已经提供根目录 `render.yaml`，可作为 Render Blueprint 使用。用 Blueprint 创建时，会一次生成两个 Web Service：
+
+```text
+ai-interviewer
+ai-customer-service-agent
+```
+
+客服服务使用 `rootDir: customer_service_agent`，因此 Render 会从子目录构建客服项目。
+
+创建 Blueprint 时，Render 会要求填写 `sync: false` 的环境变量。两个服务都要填：
+
+```text
+API_BASE_URL=https://guaihub.com/v1
+API_KEY=你的完整sk密钥
+API_MODEL=gpt-5.4-mini
+```
+
+如果你不用 Blueprint，也可以按下面方式分别创建两个 Web Service。
+
 ### 部署面试官
 
 在 Render 创建 Web Service，选择本仓库根目录。
@@ -198,4 +217,3 @@ python -m unittest discover -s tests -v
 | AI 客服 | `customer_service_agent/` | 电商售后客服 FAQ 与人工服务引导 | `8001` |
 
 如果只需要提交一个公网网址，部署对应项目即可；如果两个都要展示，需要在 Render 创建两个 Web Service。
-
