@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="基于自有 API 和本地知识库的电商售后客服">
+  <title>AI 售后客服中心</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="page-glow glow-one"></div>
+  <div class="page-glow glow-two"></div>
+
+  <main class="app-shell">
+    <header class="masthead">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">CS</div>
+        <div>
+          <p class="eyebrow">LOCAL KNOWLEDGE SERVICE</p>
+          <h1 id="storeName">AI 售后客服中心</h1>
+          <p class="subtitle">本地知识库提供依据，你的模型 API 负责组织回答。</p>
+        </div>
+      </div>
+
+      <div class="service-status">
+        <span id="statusDot" class="status-dot"></span>
+        <div>
+          <strong id="statusText">正在连接服务</strong>
+          <small id="modelText">等待模型与知识库信息</small>
+        </div>
+      </div>
+    </header>
+
+    <section class="service-layout">
+      <aside class="service-menu">
+        <div>
+          <p class="section-kicker">常见服务</p>
+          <div class="quick-grid">
+            <button class="quick-card" data-prompt="我收到的衣服尺码不合适，怎么换货？">
+              <span class="quick-index">01</span>
+              <span><strong>退换货</strong><small>尺码、颜色、质量问题</small></span>
+            </button>
+            <button class="quick-card" data-prompt="我的快递两天没有更新物流信息了，怎么办？">
+              <span class="quick-index">02</span>
+              <span><strong>物流查询</strong><small>催发货、停滞、未收到</small></span>
+            </button>
+            <button class="quick-card" data-prompt="衣服应该怎么清洗，怎样减少缩水和褪色？">
+              <span class="quick-index">03</span>
+              <span><strong>商品使用</strong><small>尺码、面料、洗护说明</small></span>
+            </button>
+            <button class="quick-card" data-prompt="为什么我的优惠券不能使用？">
+              <span class="quick-index">04</span>
+              <span><strong>优惠权益</strong><small>优惠券、积分、发票</small></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="privacy-note">
+          <p class="section-kicker">隐私提醒</p>
+          <p>请勿发送完整身份证号、银行卡号、支付密码或短信验证码。订单问题只需说明订单后四位。</p>
+        </div>
+
+        <div class="menu-actions">
+          <button id="humanButton" class="human-button" type="button">转人工客服</button>
+          <button id="clearButton" class="clear-button" type="button">清空本轮对话</button>
+        </div>
+      </aside>
+
+      <section class="chat-card">
+        <div class="chat-heading">
+          <div>
+            <p class="section-kicker">在线服务台</p>
+            <h2>现在有什么可以帮您？</h2>
+          </div>
+          <span class="availability">7 x 24 AI 服务</span>
+        </div>
+
+        <div id="messages" class="messages" aria-live="polite">
+          <article class="message assistant">
+            <div class="avatar">AI</div>
+            <div class="message-content">
+              <div class="bubble">
+                <p>您好，我可以协助处理退换货、物流、商品使用、优惠券和投诉建议。</p>
+                <p>我会先查询本地售后规则，再使用您配置的模型生成回答。没有可靠资料时，我会明确建议转人工。</p>
+              </div>
+              <span class="message-time">客服助手</span>
+            </div>
+          </article>
+        </div>
+
+        <form id="chatForm" class="composer">
+          <label for="question" class="sr-only">输入客服问题</label>
+          <textarea
+            id="question"
+            rows="2"
+            maxlength="4000"
+            placeholder="请描述您遇到的问题，例如：衣服尺码小了，如何换货？"
+            required
+          ></textarea>
+          <button id="sendButton" type="submit">发送</button>
+        </form>
+        <p class="composer-tip">Enter 发送，Shift + Enter 换行。连续两次无法匹配知识库时将建议人工处理。</p>
+      </section>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

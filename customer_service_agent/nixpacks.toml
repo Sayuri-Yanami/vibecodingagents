@@ -1,0 +1,5 @@
+[phases.build]
+cmds = ["python ingest.py"]
+
+[start]
+cmd = "python web.py"

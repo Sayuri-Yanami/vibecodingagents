@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: ai-customer-service-agent
+    env: python
+    plan: free
+    buildCommand: python ingest.py
+    startCommand: python web.py
+    autoDeploy: true
+    envVars:
+      - key: API_BASE_URL
+        sync: false
+      - key: API_KEY
+        sync: false
+      - key: API_MODEL
+        sync: false
+      - key: API_CHAT_PATH
+        value: /chat/completions
+      - key: API_KEY_HEADER
+        value: Authorization
+      - key: API_KEY_PREFIX
+        value: Bearer
+      - key: API_TIMEOUT
+        value: "90"
+      - key: API_TEMPERATURE
+        value: "0.25"
+      - key: API_MAX_TOKENS
+        value: "1200"
+      - key: API_EXTRA_HEADERS_JSON
+        value: "{}"
+      - key: API_EXTRA_BODY_JSON
+        value: "{}"
+      - key: RAG_TOP_K
+        value: "4"
+      - key: RAG_MIN_SCORE
+        value: "0.055"
+      - key: HISTORY_TURNS
+        value: "4"
+      - key: STORE_NAME
+        value: 示例优选商城
+      - key: HUMAN_SERVICE_TEXT
+        value: 人工客服服务时间为每天 09:00-21:00，请在当前页面留言订单号后四位和问题摘要，我们会尽快处理。

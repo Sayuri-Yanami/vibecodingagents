@@ -1,0 +1,4 @@
+# 核心功能只使用 Python 标准库，无强制第三方依赖。
+# 如需把 PDF 或 DOCX 放进 docs/，可选安装：
+# pypdf
+# python-docx
